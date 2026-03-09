@@ -9,10 +9,17 @@ function App() {
   const [activeTopicId, setActiveTopicId] = useState<string>('basic-types');
   const activeTopic = syntaxTopics[activeTopicId];
 
+  // 处理导航跳转
+  const handleNavigate = (id: string) => {
+    setActiveTopicId(id);
+    // 跳转后滚动到顶部
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <DocsLayout
       activeTopicId={activeTopicId}
-      onTopicSelect={setActiveTopicId}
+      onTopicSelect={handleNavigate}
     >
       {/* 顶部标题栏 */}
       <header className="sticky top-0 z-10 bg-white/80 dark:bg-gray-800/80 
@@ -27,17 +34,25 @@ function App() {
           </p>
         </div>
         
-        {/* 主题切换按钮 */}
         <ThemeToggle />
       </header>
 
       {/* 页面主体内容 */}
       <div className="p-6">
         {activeTopic ? (
-          <TopicContent topic={activeTopic} />
+          <TopicContent 
+            topic={activeTopic} 
+            onNavigate={handleNavigate}  // 传递导航回调
+          />
         ) : (
           <div className="text-center py-12 text-gray-500">
             <p>❌ 知识点未找到：{activeTopicId}</p>
+            <button 
+              onClick={() => handleNavigate('basic-types')}
+              className="mt-4 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+            >
+              返回首页
+            </button>
           </div>
         )}
       </div>
