@@ -1,11 +1,12 @@
+// src/components/Sidebar/NavItem.tsx
 import React, { useState } from 'react';
 import type { FC } from 'react';
 import type { NavItem } from '../../data/navigation';
 
 interface NavItemProps {
   item: NavItem;
-  depth: number;           // 当前层级（用于缩进）
-  activeId: string;        // 当前选中的知识点 ID
+  depth: number;
+  activeId: string;
   onSelect: (id: string) => void;
 }
 
@@ -15,13 +16,17 @@ export const NavItemComponent: FC<NavItemProps> = ({
   activeId,
   onSelect,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(true); // 默认展开
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const isCategory = item.type === 'category';
   const isActive = activeId === item.id;
-  const hasActiveChild = item.children?.some(
-    (child) => child.id === activeId || child.children?.some((c) => c.id === activeId)
-  );
+  
+  // 判断是否有子项被选中（用于保持分类展开）
+//   const hasActiveChild = item.children?.some(
+//     (child) => 
+//       child.id === activeId || 
+//       child.children?.some((c) => c.id === activeId)
+//   );
 
   // 点击分类：展开/收起
   const handleCategoryClick = () => {
@@ -43,29 +48,39 @@ export const NavItemComponent: FC<NavItemProps> = ({
       <button
         onClick={isCategory ? handleCategoryClick : handleTopicClick}
         className={`
-          w-full text-left px-3 py-2 rounded-lg text-sm font-medium
-          transition-all duration-200 flex items-center gap-2
+          w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium
+          transition-all duration-200 flex items-center gap-2.5
+          group
           ${isActive
-            ? 'bg-primary-500 text-white shadow-sm'
-            : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+            ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-glow'
+            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-gray-200'
           }
-          ${!isCategory && hasActiveChild ? 'bg-gray-100 dark:bg-gray-700' : ''}
         `}
-        style={{ paddingLeft: `${depth * 12 + 12}px` }} // 层级缩进
+        style={{ paddingLeft: `${depth * 16 + 14}px` }}
       >
         {/* 展开/收起图标（仅分类显示） */}
         {isCategory && (
           <span className={`
             text-xs transition-transform duration-200
             ${isExpanded ? 'rotate-90' : ''}
+            ${isActive ? 'text-white/80' : 'text-gray-400'}
           `}>
             ▶
           </span>
         )}
         
-        {/* 图标 + 标题 */}
-        <span>{item.icon || '📄'}</span>
+        {/* 图标 */}
+        <span className="text-base">{item.icon || '📄'}</span>
+        
+        {/* 标题 */}
         <span className="truncate">{item.title}</span>
+        
+        {/* 悬停指示器（仅非激活状态显示） */}
+        {!isActive && (
+          <span className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-gray-400">
+            →
+          </span>
+        )}
       </button>
 
       {/* 递归渲染子项 */}

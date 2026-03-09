@@ -23,3 +23,22 @@
     @apply bg-transparent;
   }
 }
+
+
+/* Shiki 高亮容器样式优化 */
+.shiki-container {
+  @apply p-4 bg-gray-50 dark:bg-gray-900;
+}
+
+.shiki-container pre {
+  @apply m-0 !important;
+}
+
+.shiki-container code {
+  @apply font-mono text-sm leading-relaxed !important;
+}
+
+/* 修复 Shiki 内联样式与暗色主题冲突 */
+.dark .shiki-container span {
+  color: inherit !important;
+}
